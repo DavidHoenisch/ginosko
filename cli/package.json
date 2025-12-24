@@ -1,0 +1,19 @@
+{
+	"name": "gnoskos-cli",
+	"version": "1.0.0",
+	"description": "CLI tool for processing Jane Austen's works into vectors",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"dependencies": {
+		"@langchain/openai": "^0.3.0",
+		"@langchain/textsplitters": "^0.1.0",
+		"@langchain/community": "^0.3.0",
+		"pg": "^8.11.0",
+		"pgvector": "^0.1.8",
+		"dotenv": "^16.3.1",
+		"commander": "^12.0.0"
+	}
+}

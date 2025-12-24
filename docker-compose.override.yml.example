@@ -1,0 +1,20 @@
+# Override file for local development
+# Copy this to docker-compose.override.yml and modify as needed
+
+version: '3.8'
+
+services:
+  app:
+    # Override for development - mount source code and use dev server
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  # Comment out CLI service for development (run manually if needed)
+  # cli:
+  #   restart: "no"

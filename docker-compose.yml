@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: gnoskos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gnoskos-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/gnoskos
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gnoskos-network
+    restart: unless-stopped
+
+  cli:
+    build:
+      context: .
+      dockerfile: cli.Dockerfile
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/gnoskos
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gnoskos-network
+    command: ["npm", "start", "process"]
+    restart: "no"  # Run once and exit
+
+networks:
+  gnoskos-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
